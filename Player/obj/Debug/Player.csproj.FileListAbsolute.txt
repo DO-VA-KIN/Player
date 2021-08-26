@@ -1,0 +1,31 @@
+C:\Users\pressF\Documents\Visual Studio 2017\Projects\Player\Player\obj\Debug\Player.csprojAssemblyReference.cache
+C:\Users\pressF\Documents\Visual Studio 2017\Projects\Player\Player\obj\Debug\MainWindow.g.cs
+C:\Users\pressF\Documents\Visual Studio 2017\Projects\Player\Player\obj\Debug\App.g.cs
+C:\Users\pressF\Documents\Visual Studio 2017\Projects\Player\Player\obj\Debug\Player_MarkupCompile.cache
+C:\Users\pressF\Documents\Visual Studio 2017\Projects\Player\Player\obj\Debug\Player_MarkupCompile.lref
+C:\Users\pressF\Documents\Visual Studio 2017\Projects\Player\Player\bin\Debug\Player.exe.config
+C:\Users\pressF\Documents\Visual Studio 2017\Projects\Player\Player\bin\Debug\Player.exe
+C:\Users\pressF\Documents\Visual Studio 2017\Projects\Player\Player\bin\Debug\Player.pdb
+C:\Users\pressF\Documents\Visual Studio 2017\Projects\Player\Player\obj\Debug\MainWindow.baml
+C:\Users\pressF\Documents\Visual Studio 2017\Projects\Player\Player\obj\Debug\Player.g.resources
+C:\Users\pressF\Documents\Visual Studio 2017\Projects\Player\Player\obj\Debug\Player.Properties.Resources.resources
+C:\Users\pressF\Documents\Visual Studio 2017\Projects\Player\Player\obj\Debug\Player.csproj.GenerateResource.cache
+C:\Users\pressF\Documents\Visual Studio 2017\Projects\Player\Player\obj\Debug\Player.csproj.CoreCompileInputs.cache
+C:\Users\pressF\Documents\Visual Studio 2017\Projects\Player\Player\obj\Debug\Player.exe
+C:\Users\pressF\Documents\Visual Studio 2017\Projects\Player\Player\obj\Debug\Player.pdb
+C:\Users\pressF\Documents\Visual Studio 2017\Projects\Player\Player\obj\Debug\Player_Content.g.cs
+C:\Users\pressF\Documents\Visual Studio 2017\Projects\Player\Player\bin\Debug\music\basePlaylist\1st track   Pirates - He is a pirate.mp3
+C:\Users\pressF\Documents\Visual Studio 2017\Projects\Player\Player\bin\Debug\music\basePlaylist\Pirates - Barbossa is hungry.mp3
+C:\Users\pressF\Documents\Visual Studio 2017\Projects\Player\Player\bin\Debug\music\basePlaylist\Pirates - Black pearl.mp3
+C:\Users\pressF\Documents\Visual Studio 2017\Projects\Player\Player\bin\Debug\music\basePlaylist\Pirates - Blood ritual.mp3
+C:\Users\pressF\Documents\Visual Studio 2017\Projects\Player\Player\bin\Debug\music\basePlaylist\Pirates - Bootstrap.mp3
+C:\Users\pressF\Documents\Visual Studio 2017\Projects\Player\Player\bin\Debug\music\basePlaylist\Pirates - Cave.mp3
+C:\Users\pressF\Documents\Visual Studio 2017\Projects\Player\Player\bin\Debug\music\basePlaylist\Pirates - Fog bound.mp3
+C:\Users\pressF\Documents\Visual Studio 2017\Projects\Player\Player\bin\Debug\music\basePlaylist\Pirates - Medallion calls.mp3
+C:\Users\pressF\Documents\Visual Studio 2017\Projects\Player\Player\bin\Debug\music\basePlaylist\Pirates - Moonlight serenade.mp3
+C:\Users\pressF\Documents\Visual Studio 2017\Projects\Player\Player\bin\Debug\music\basePlaylist\Pirates - One last shot.mp3
+C:\Users\pressF\Documents\Visual Studio 2017\Projects\Player\Player\bin\Debug\music\basePlaylist\Pirates - Skull and Crossbones.mp3
+C:\Users\pressF\Documents\Visual Studio 2017\Projects\Player\Player\bin\Debug\music\basePlaylist\Pirates - Swords crossed.mp3
+C:\Users\pressF\Documents\Visual Studio 2017\Projects\Player\Player\bin\Debug\music\basePlaylist\Pirates - Underwater march.mp3
+C:\Users\pressF\Documents\Visual Studio 2017\Projects\Player\Player\bin\Debug\music\basePlaylist\Pirates - Walk the plank.mp3
+C:\Users\pressF\Documents\Visual Studio 2017\Projects\Player\Player\bin\Debug\music\basePlaylist\Pirates - Will and Elizabeth.mp3
