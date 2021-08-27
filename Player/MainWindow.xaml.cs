@@ -37,30 +37,25 @@ namespace Player
         ////////общее
         public void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            mediaPlayer.MediaEnded += MediaPlayer_MediaEnded;
+
             try
             {
-                //DirectoryInfo directoryInfo = new DirectoryInfo(Environment.CurrentDirectory + @"\music\basePlaylist");//перед сборкой удалить нижнюю строку и раскомментить эту
-                DirectoryInfo directoryInfo = new DirectoryInfo(@"C:\Users\pressF\Documents\Visual Studio 2017\Projects\Player\Player\music\basePlaylist");
+                //DirectoryInfo directoryInfo = new DirectoryInfo(Environment.CurrentDirectory + @"ways");//перед сборкой удалить нижнюю строку и раскомментить эту
+                DirectoryInfo directoryInfo = new DirectoryInfo(@"C:\Users\pressF\Documents\Visual Studio 2017\Projects\Player\Player\ways");
                 foreach (var file in directoryInfo.GetFiles())
                 {
-                    if (musicExtension.Contains(file.Extension))
-                    {
-                        music.Add(file.FullName);
-                        musicNames.Add(file.Name.Replace(file.Extension, ""));
-                    }
+                    string name = file.Name.Replace(file.Extension, "");
+
+                    playlists.Add(file.FullName);
+                    playlistNames.Add(name);
+                    ComboBoxPlaylists.Items.Add(name);
                 }
 
-                if (music.Count > 0)
+                if (playlists.Count > 0)
                 {
-                    musicNum = 0;
-
-                    mediaPlayer.MediaEnded += MediaPlayer_MediaEnded;
-                    mediaPlayer.Open(new Uri(music[musicNum]));
-                    mediaPlayer.Play();
-
-                    ButtonMusicPlay.Visibility = Visibility.Visible;
-                    ButtonMusicNext.Visibility = Visibility.Visible;
-                    LabelMusic.Content = musicNames[musicNum];
+                    LabelMusic.Content = "";
+                    ComboBoxPlaylists.SelectedIndex = 0;
                 }
             }
             catch (Exception ex)
@@ -90,14 +85,9 @@ namespace Player
                     musicNum = 0;
                 else musicNum++;
 
-                mediaPlayer.Open(new Uri(music[musicNum]));
-                mediaPlayer.Play();
-
-                LabelMusic.Content = musicNames[musicNum];
+                ComboBoxTracks.SelectedIndex = musicNum;
             }
-            catch (Exception ex)
-            { MessageBox.Show(ex.Message);
-            }
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
         }
 
         private void ButtonMusicPlay_Click(object sender, RoutedEventArgs e)
@@ -166,7 +156,7 @@ namespace Player
                     playlists.Add(fileWay);
 
                     ComboBoxPlaylists.Items.Add(newPlaylistName);
-                    ComboBoxPlaylists.SelectedIndex = ComboBoxPlaylists.Items.Count - 1;
+                    //ComboBoxPlaylists.SelectedIndex = ComboBoxPlaylists.Items.Count - 1;
                 }
                 else { }//
             }
@@ -177,6 +167,14 @@ namespace Player
 
         private void ComboBoxPlaylists_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            mediaPlayer.Close();
+            LabelMusic.Content = "";
+            ComboBoxTracks.Items.Clear();
+
+            music.Clear();
+            musicNames.Clear();
+            musicNum = 0;
+
             string fileWay = playlists[ComboBoxPlaylists.SelectedIndex];
 
             try
@@ -191,9 +189,16 @@ namespace Player
 
                 foreach (string item in musicNames)
                     ComboBoxTracks.Items.Add(item);
+
+                ComboBoxTracks.SelectedIndex = 0;
             }
-            catch (Exception ex) { MessageBox.Show(ex.Message); }
-            
+            catch (Exception ex) { MessageBox.Show(ex.Message); }           
+        }
+
+
+        private void ComboBoxTracks_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            mediaPlayer
         }
         /////
 

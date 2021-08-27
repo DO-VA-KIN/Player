@@ -34,6 +34,6 @@
         <Button x:Name="ButtonNewPlaylist" Content="Новый плейлист" ToolTip="Поиск музыки в файлах" Background="LightBlue"  Margin="10,281,614,46" FontSize="14" Click="ButtonNewPlaylist_Click"/>
 
         <ComboBox x:Name="ComboBoxPlaylists" Margin="10,45,534,291" SelectionChanged="ComboBoxPlaylists_SelectionChanged"/>
-        <ComboBox x:Name="ComboBoxTracks" Margin="524,45,20,291"/>
+        <ComboBox x:Name="ComboBoxTracks" Margin="524,45,20,291" SelectionChanged="ComboBoxTracks_SelectionChanged"/>
     </Grid>
 </Window>
