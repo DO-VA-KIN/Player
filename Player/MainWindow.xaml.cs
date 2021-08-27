@@ -66,6 +66,16 @@ namespace Player
             catch (Exception ex)
             { MessageBox.Show(ex.Message); }
         }
+
+
+        public string parseWay(string way)
+        {
+            int end = way.LastIndexOf(".");
+            int beg = way.LastIndexOf("\\");
+            way = way.Remove(end, way.Length - end);
+            way = way.Remove(0, beg + 1);
+            return way;
+        }
         //////
 
 
@@ -128,7 +138,7 @@ namespace Player
 
                 if (!replace)
                 {
-                    //progWay = Environment.CurrentDirectory + @"\ways" + newPlaylistName + ".txt";
+                    //fileWay = Environment.CurrentDirectory + @"\ways" + newPlaylistName + ".txt";
                     fileWay = @"C:\Users\pressF\Documents\Visual Studio 2017\Projects\Player\Player\ways\" + newPlaylistName + ".txt";
 
                     if (File.Exists(fileWay))
@@ -152,10 +162,11 @@ namespace Player
                     }
                     streamWriter.Close();
 
-                    ComboBoxPlaylists.Items.Add(newPlaylistName);
-                    ComboBoxPlaylists.SelectedIndex = ComboBoxPlaylists.Items.Count - 1;
                     playlistNames.Add(newPlaylistName);
                     playlists.Add(fileWay);
+
+                    ComboBoxPlaylists.Items.Add(newPlaylistName);
+                    ComboBoxPlaylists.SelectedIndex = ComboBoxPlaylists.Items.Count - 1;
                 }
                 else { }//
             }
@@ -166,7 +177,23 @@ namespace Player
 
         private void ComboBoxPlaylists_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            string fileWay = playlists[ComboBoxPlaylists.SelectedIndex];
 
+            try
+            {
+                StreamReader streamReader = new StreamReader(fileWay);
+
+                while (!streamReader.EndOfStream)
+                    music.Add(streamReader.ReadLine());
+
+                foreach (string item in music)
+                    musicNames.Add(parseWay(item));
+
+                foreach (string item in musicNames)
+                    ComboBoxTracks.Items.Add(item);
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
+            
         }
         /////
 
