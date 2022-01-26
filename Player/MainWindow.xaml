@@ -5,36 +5,68 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Player"
         mc:Ignorable="d"
-        Title="" Height="400" Width="800" ResizeMode="CanMinimize" Loaded="Window_Loaded" Closing="Window_Closing" >
+        x:Name="Window1" Title="Ghost Плеер" Height="400" Width="800" ResizeMode="CanMinimize" Loaded="Window_Loaded" Closing="Window_Closing" Icon="images/icon/itunes.png" WindowStartupLocation="CenterScreen" BorderBrush="Black" BorderThickness="0" FontSize="14">
     <Grid>
-        <Menu Grid.Row="0" Background="AliceBlue">
+        <Menu Grid.Row="0" Background="AliceBlue" FontWeight="Medium" FontSize="13">
             <MenuItem Header="Файл">
                 <MenuItem x:Name="Menu_Close" Header="Закрыть"/>
             </MenuItem>
             <MenuItem x:Name="Menu_Settings" Header="Настройка"/>
         </Menu>
 
-        <Label x:Name="LabelMusic" Content="music not found" HorizontalAlignment="Left" FlowDirection="LeftToRight" Margin="0,330,0,0" VerticalAlignment="Stretch" Width="794" FontSize="18" FontFamily="Times New Roman"/>
+        <Label x:Name="LabelMusic" Content= "музыка не найдена" HorizontalAlignment="Left" FlowDirection="LeftToRight" Margin="0,330,0,0" VerticalAlignment="Stretch" Width="794" FontSize="18" FontFamily="Times New Roman"/>
         <Button x:Name="ButtonMusicPlay" Content="" ToolTip="Запуск/остановка проигрывателя" HorizontalAlignment="Left" Margin="333,281,0,0" VerticalAlignment="Top" Width="41" Height="37" Cursor="Hand" Click="ButtonMusicPlay_Click" Visibility="Visible">
             <Button.OpacityMask>
-                <ImageBrush ImageSource="Images/musicPlay.png"/>
+                <ImageBrush ImageSource="Images/icon/musicPlay.png"/>
             </Button.OpacityMask>
             <Button.Background>
-                <ImageBrush ImageSource="Images/musicPlay.png"/>
+                <ImageBrush ImageSource="Images/icon/musicPlay.png"/>
             </Button.Background>
         </Button>
         <Button x:Name="ButtonMusicNext" Content="" ToolTip="Следующий трек" HorizontalAlignment="Left" Margin="389,281,0,0" VerticalAlignment="Top" Width="40" Height="37" Cursor="Hand" Click="MediaPlayer_MediaEnded" Visibility="Visible">
             <Button.OpacityMask>
-                <ImageBrush ImageSource="Images/next.png"/>
+                <ImageBrush ImageSource="Images/icon/next.png"/>
             </Button.OpacityMask>
             <Button.Background>
-                <ImageBrush ImageSource="Images/next.png"/>
+                <ImageBrush ImageSource="Images/icon/next.png"/>
             </Button.Background>
         </Button>
-        <TextBox x:Name="TextBoxPlaylistName" HorizontalAlignment="Left" Height="25" TextWrapping="Wrap" TextAlignment="Center" FontStyle="Normal" FontSize="14" Text="NewPlaylist_1" VerticalAlignment="Top" Width="160" Margin="34,255,0,0"/>
-        <Button x:Name="ButtonNewPlaylist" Content="Новый плейлист" ToolTip="Поиск музыки в файлах" Background="LightBlue"  Margin="10,280,615,45" FontSize="14" Click="ButtonNewPlaylist_Click"/>
 
-        <ComboBox x:Name="ComboBoxPlaylists" Margin="10,45,535,290" SelectionChanged="ComboBoxPlaylists_SelectionChanged"/>
-        <ComboBox x:Name="ComboBoxTracks" Margin="525,45,20,290" SelectionChanged="ComboBoxTracks_SelectionChanged"/>
+        <ComboBox x:Name="ComboBoxPlaylists" HorizontalAlignment="Left" VerticalAlignment="Top" IsReadOnly="True" FontSize="14" FontWeight="Normal" Margin="25,45,0,0" Height="30"  Width="240" SelectionChanged="ComboBoxPlaylists_SelectionChanged"/>
+        <ComboBox x:Name="ComboBoxTracks" HorizontalAlignment="Left" VerticalAlignment="Top" IsReadOnly="True" FontSize="14" FontWeight="Normal" Margin="520,45,0,0" Height="30"  Width="240" SelectionChanged="ComboBoxTracks_SelectionChanged"/>
+
+        <Button x:Name="btnDeletePlaylist"  Content="" HorizontalAlignment="Left" Margin="5,50,0,0" VerticalAlignment="Top" Width="20" Height="20" RenderTransformOrigin="2.15,1.5" Click="BtnDeletePlaylist_Click">
+            <Button.OpacityMask>
+                <ImageBrush ImageSource="Images/icon/delete2.png"/>
+            </Button.OpacityMask>
+            <Button.Background>
+                <ImageBrush ImageSource="Images/icon/delete2.png"/>
+            </Button.Background>
+        </Button>
+        <Button x:Name="btnDeleteTrack" Content="" HorizontalAlignment="Left" Margin="760,50,0,0" VerticalAlignment="Top" Width="20" Height="20" Click="BtnDeleteTrack_Click">
+            <Button.OpacityMask>
+                <ImageBrush ImageSource="Images/icon/delete2.png"/>
+            </Button.OpacityMask>
+            <Button.Background>
+                <ImageBrush ImageSource="Images/icon/delete2.png"/>
+            </Button.Background>
+        </Button>
+        <Button x:Name="ButtonNewPlaylist" HorizontalAlignment="Left" VerticalAlignment="Top" Content="" ToolTip="Поиск музыки в файлах" FontWeight="Medium" Margin="265,50,0,0" Height="20" Width="20" FontSize="15" Click="ButtonNewPlaylist_Click">
+            <Button.OpacityMask>
+                <ImageBrush ImageSource="Images/icon/add.png"/>
+            </Button.OpacityMask>
+            <Button.Background>
+                <ImageBrush ImageSource="Images/icon/add.png"/>
+            </Button.Background>
+        </Button>
+        <Button x:Name="ButtonAddTrack" HorizontalAlignment="Left" VerticalAlignment="Top" Content="" ToolTip="Добавить трек" FontWeight="Medium" Margin="500,50,0,0" Height="20" Width="20" FontSize="15" Click="ButtonNewPlaylist_Click" RenderTransformOrigin="11.65,0.55">
+            <Button.OpacityMask>
+                <ImageBrush ImageSource="Images/icon/add.png"/>
+            </Button.OpacityMask>
+            <Button.Background>
+                <ImageBrush ImageSource="Images/icon/add.png"/>
+            </Button.Background>
+        </Button>
+
     </Grid>
 </Window>

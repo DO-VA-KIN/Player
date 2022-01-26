@@ -57,6 +57,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="StaticFunc.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -97,20 +98,26 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="ways\TextFile1.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-  </ItemGroup>
-  <ItemGroup />
-  <ItemGroup>
-    <Resource Include="images\musicPlay.png" />
-    <Resource Include="images\musicStop.png" />
-    <Resource Include="images\next.png" />
+    <Folder Include="images\background\" />
+    <Folder Include="ways\" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="images\help_icon.png" />
+    <Resource Include="images\icon\musicPlay.png" />
+    <Resource Include="images\icon\musicStop.png" />
+    <Resource Include="images\icon\next.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="images\icon\help_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\icon\volume.png" />
+    <Resource Include="images\icon\delete1.png" />
+    <Resource Include="images\icon\musicVenile.png" />
+    <Resource Include="images\icon\music2.png" />
+    <Resource Include="images\icon\itunes.png" />
+    <Resource Include="images\icon\delete2.png" />
+    <Resource Include="images\icon\music1.png" />
+    <Resource Include="images\icon\add.png" />
     <Content Include="music\basePlaylist\1st track   Pirates - He is a pirate.mp3">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

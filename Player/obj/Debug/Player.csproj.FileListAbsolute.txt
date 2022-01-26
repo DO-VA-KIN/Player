@@ -1,4 +1,3 @@
-C:\Users\pressF\Documents\Visual Studio 2017\Projects\Player\Player\obj\Debug\Player.csprojAssemblyReference.cache
 C:\Users\pressF\Documents\Visual Studio 2017\Projects\Player\Player\obj\Debug\MainWindow.g.cs
 C:\Users\pressF\Documents\Visual Studio 2017\Projects\Player\Player\obj\Debug\App.g.cs
 C:\Users\pressF\Documents\Visual Studio 2017\Projects\Player\Player\obj\Debug\Player_MarkupCompile.cache
@@ -29,3 +28,4 @@ C:\Users\pressF\Documents\Visual Studio 2017\Projects\Player\Player\bin\Debug\mu
 C:\Users\pressF\Documents\Visual Studio 2017\Projects\Player\Player\bin\Debug\music\basePlaylist\Pirates - Underwater march.mp3
 C:\Users\pressF\Documents\Visual Studio 2017\Projects\Player\Player\bin\Debug\music\basePlaylist\Pirates - Walk the plank.mp3
 C:\Users\pressF\Documents\Visual Studio 2017\Projects\Player\Player\bin\Debug\music\basePlaylist\Pirates - Will and Elizabeth.mp3
+C:\Users\pressF\Documents\Visual Studio 2017\Projects\Player\Player\obj\Debug\Player.csprojAssemblyReference.cache
