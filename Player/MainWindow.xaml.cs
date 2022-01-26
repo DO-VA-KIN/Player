@@ -116,8 +116,18 @@ namespace Player
         private void ButtonNewPlaylist_Click(object sender, RoutedEventArgs e)
         {
             string fileWay;//путь к создаваемому файлу
+            newPlaylistName = TextBoxPlaylistName.Text;
 
             FolderBrowserDialog fbd = new FolderBrowserDialog();
+            fbd.Description = "Выберите директорию для поиска музыки";
+            fbd.RootFolder = Environment.SpecialFolder.Desktop;
+            if (playlists.Count > 0)
+            {
+                string str = playlists[playlists.Count - 1];
+                int end = str.LastIndexOf("\\");
+                str = str.Remove(end, str.Length - end);
+                fbd.SelectedPath = str;
+            }
 
             if (fbd.ShowDialog() != System.Windows.Forms.DialogResult.OK)
                 return;
@@ -156,6 +166,7 @@ namespace Player
                     playlists.Add(fileWay);
 
                     ComboBoxPlaylists.Items.Add(newPlaylistName);
+                    ComboBoxPlaylists.SelectedItem = newPlaylistName;
                     //ComboBoxPlaylists.SelectedIndex = ComboBoxPlaylists.Items.Count - 1;
                 }
                 else { }//
@@ -164,6 +175,14 @@ namespace Player
         }
 
 
+        private void ComboBoxTracks_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (ComboBoxTracks.SelectedIndex > -1)
+            {
+                mediaPlayer.Open(new Uri(music[ComboBoxTracks.SelectedIndex]));
+                mediaPlayer.Play();
+            }
+        }
 
         private void ComboBoxPlaylists_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -196,10 +215,6 @@ namespace Player
         }
 
 
-        private void ComboBoxTracks_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            mediaPlayer
-        }
         /////
 
 

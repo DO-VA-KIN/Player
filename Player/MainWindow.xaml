@@ -31,9 +31,10 @@
                 <ImageBrush ImageSource="Images/next.png"/>
             </Button.Background>
         </Button>
-        <Button x:Name="ButtonNewPlaylist" Content="Новый плейлист" ToolTip="Поиск музыки в файлах" Background="LightBlue"  Margin="10,281,614,46" FontSize="14" Click="ButtonNewPlaylist_Click"/>
+        <TextBox x:Name="TextBoxPlaylistName" HorizontalAlignment="Left" Height="25" TextWrapping="Wrap" TextAlignment="Center" FontStyle="Normal" FontSize="14" Text="NewPlaylist_1" VerticalAlignment="Top" Width="160" Margin="34,255,0,0"/>
+        <Button x:Name="ButtonNewPlaylist" Content="Новый плейлист" ToolTip="Поиск музыки в файлах" Background="LightBlue"  Margin="10,280,615,45" FontSize="14" Click="ButtonNewPlaylist_Click"/>
 
-        <ComboBox x:Name="ComboBoxPlaylists" Margin="10,45,534,291" SelectionChanged="ComboBoxPlaylists_SelectionChanged"/>
-        <ComboBox x:Name="ComboBoxTracks" Margin="524,45,20,291" SelectionChanged="ComboBoxTracks_SelectionChanged"/>
+        <ComboBox x:Name="ComboBoxPlaylists" Margin="10,45,535,290" SelectionChanged="ComboBoxPlaylists_SelectionChanged"/>
+        <ComboBox x:Name="ComboBoxTracks" Margin="525,45,20,290" SelectionChanged="ComboBoxTracks_SelectionChanged"/>
     </Grid>
 </Window>
