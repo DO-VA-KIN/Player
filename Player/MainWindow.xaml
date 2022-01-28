@@ -59,7 +59,7 @@
                 <ImageBrush ImageSource="Images/icon/add.png"/>
             </Button.Background>
         </Button>
-        <Button x:Name="ButtonAddTrack" HorizontalAlignment="Left" VerticalAlignment="Top" Content="" ToolTip="Добавить трек" FontWeight="Medium" Margin="500,50,0,0" Height="20" Width="20" FontSize="15" Click="ButtonNewPlaylist_Click" RenderTransformOrigin="11.65,0.55">
+        <Button x:Name="ButtonAddTrack" HorizontalAlignment="Left" VerticalAlignment="Top" Content="" ToolTip="Добавить трек" FontWeight="Medium" Margin="500,50,0,0" Height="20" Width="20" FontSize="15" RenderTransformOrigin="11.65,0.55" Click="ButtonAddTrack_Click">
             <Button.OpacityMask>
                 <ImageBrush ImageSource="Images/icon/add.png"/>
             </Button.OpacityMask>

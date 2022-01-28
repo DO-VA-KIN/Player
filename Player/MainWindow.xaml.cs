@@ -41,8 +41,7 @@ namespace Player
 
             try
             {
-                //DirectoryInfo directoryInfo = new DirectoryInfo(Environment.CurrentDirectory + @"ways");//перед сборкой удалить нижнюю строку и раскомментить эту
-                DirectoryInfo directoryInfo = new DirectoryInfo(@"C:\Users\pressF\Documents\Visual Studio 2017\Projects\Player\Player\ways");
+                DirectoryInfo directoryInfo = new DirectoryInfo(Environment.CurrentDirectory + @"\ways");
                 foreach (var file in directoryInfo.GetFiles())
                 {
                     string name = file.Name.Replace(file.Extension, "");
@@ -104,14 +103,13 @@ namespace Player
                 musicNum = ComboBoxTracks.SelectedIndex;
                 mediaPlayer.Open(new Uri(music[musicNum]));
                 mediaPlayer.Play();
+
+                LabelMusic.Content = musicNames[musicNum];
             }
         }
 
         private void ComboBoxPlaylists_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (ComboBoxPlaylists.SelectedIndex == -1)
-                return;
-
             mediaPlayer.Close();
             LabelMusic.Content = "";
             ComboBoxTracks.Items.Clear();
@@ -120,14 +118,23 @@ namespace Player
             musicNames.Clear();
             musicNum = 0;
 
+            if (ComboBoxPlaylists.SelectedIndex == -1)
+                return;
+
+            bool errFileExist = false;//существует ли файл, записанный в плейлист
+
             string fileWay = playlists[ComboBoxPlaylists.SelectedIndex];
+            StreamReader streamReader = new StreamReader(fileWay);
 
             try
             {
-                StreamReader streamReader = new StreamReader(fileWay);
-
                 while (!streamReader.EndOfStream)
-                    music.Add(streamReader.ReadLine());
+                {
+                    string str = streamReader.ReadLine();
+                    if (File.Exists(str))
+                        music.Add(str);
+                    else errFileExist = true;
+                }
 
                 foreach (string item in music)
                     musicNames.Add(StaticFunc.parseWay(item));
@@ -135,12 +142,23 @@ namespace Player
                 foreach (string item in musicNames)
                     ComboBoxTracks.Items.Add(item);
 
+
+                if (errFileExist)
+                {
+                    StreamWriter streamWriter = new StreamWriter(fileWay, false);
+                    foreach (string musicWay in music)
+                        streamWriter.WriteLine(musicWay);
+                }
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
+
+            finally
+            {
+                streamReader.Close();
+
                 if (ComboBoxTracks.Items.Count > 0)
                     ComboBoxTracks.SelectedIndex = 0;
-
-                streamReader.Close();
             }
-            catch (Exception ex) { MessageBox.Show(ex.Message); }           
         }
 
 
@@ -148,7 +166,8 @@ namespace Player
 ///////добавление и удаление треков/плейлистов
         private void ButtonNewPlaylist_Click(object sender, RoutedEventArgs e)
         {
-            string fileWay;//путь к создаваемому файлу
+            string directory;//директория с музыкой(выбранная пользователем)
+            string fileWay;//путь к создаваемому файлу (запись треков в текстовый файл в папке с программой)
             string fileName;//название нового плейлиста
 
             System.Windows.Forms.SaveFileDialog sfd = new System.Windows.Forms.SaveFileDialog();
@@ -169,15 +188,18 @@ namespace Player
                 return;
             try
             {
+                directory = sfd.FileName;
+                int end = directory.LastIndexOf("\\");
+                directory = directory.Remove(end, directory.Length - end);
 
-                DirectoryInfo directoryInfo = new DirectoryInfo(sfd.InitialDirectory);
+                DirectoryInfo directoryInfo = new DirectoryInfo(directory);
                 List<string> allFiles = new List<string>();
                 fileName = StaticFunc.parseWay(sfd.FileName);
 
                 if (!replace)
                 {
-                    //fileWay = Environment.CurrentDirectory + @"\ways" + newPlaylistName + ".txt";
-                    fileWay = @"C:\Users\pressF\Documents\Visual Studio 2017\Projects\Player\Player\ways\" + fileName + ".txt";
+                    fileWay = Environment.CurrentDirectory + @"\ways\" + fileName + ".txt";
+                    StaticFunc.checkAndCreateDirectoryExist(Environment.CurrentDirectory + @"\ways");
 
                     bool flag = File.Exists(fileWay);
                     if (flag)
@@ -194,7 +216,7 @@ namespace Player
 
                     StreamWriter streamWriter = new StreamWriter(fileWay);
 
-                    foreach (var file in directoryInfo.GetFiles())
+                    foreach (var file in directoryInfo.GetFiles())//
                     {
                         if (musicExtension.Contains(file.Extension))
                             streamWriter.WriteLine(file.FullName);
@@ -214,8 +236,16 @@ namespace Player
             catch (Exception ex) { MessageBox.Show(ex.Message); }
         }
 
+        private void ButtonAddTrack_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
         private void BtnDeletePlaylist_Click(object sender, RoutedEventArgs e)
         {
+            if (ComboBoxPlaylists.SelectedIndex == -1)
+                return;
+
             if (MessageBox.Show("Удалить плейлист?", "Внимание!",
                 MessageBoxButton.OKCancel,
                 MessageBoxImage.Question,
@@ -224,14 +254,8 @@ namespace Player
             { return; }
 
             int numDelete = ComboBoxPlaylists.SelectedIndex;
-            Process[] procFile = Process.GetProcessesByName("Notepad");
-            foreach(Process process in  procFile)
-            {
-                if (StaticFunc.parseWay(process.MainWindowTitle) == playlistNames[numDelete])
-                    process.Kill();
-            }
+            StaticFunc.killProcessByName(playlistNames[numDelete], "Notepad");
 
-            //ComboBoxPlaylists.SelectedIndex = -1;
             try
             {
                 File.Delete(playlists[numDelete]);
@@ -249,7 +273,8 @@ namespace Player
 
         private void BtnDeleteTrack_Click(object sender, RoutedEventArgs e)
         {
-
+            //int numDelFile = ComboBoxTracks.SelectedIndex;
+            //ComboBoxTracks.Items.Remove(numDelFile);
         }
         /////
 
@@ -279,7 +304,6 @@ namespace Player
                 { MessageBox.Show(ex.Message); }
             }
         }
-
 
     }
 }
