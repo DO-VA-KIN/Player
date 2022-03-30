@@ -25,21 +25,49 @@ namespace Player
         }
 
 
-        public static string createFilterStringSFD(List<string> extension)
+
+        public static string createFilterStringSFD(List<string> extensions)
         {
-            //создает строку фильтра SaveFileDialog/OpenFileDialog , переберая массив допустимых расширений; ниже примеры написания в ручную
+            //создает строку фильтра SaveFileDialog/OpenFileDialog , переберая стринговый лист допустимых расширений
 
-            //sfd.Filter = "cnt64 files (*.cnt64)|*.cnt64|All files (*.*)|*.*";
-            //string filter = "music files (*" + musicExtension[0] +" *" + musicExtension[1] +")|*" + musicExtension[0] +"; *" + musicExtension[1];
+            string filter = "";
 
-            string filter = "valid files (";
-            foreach (string item in extension)
+            filter += "Valid Files (";
+            foreach (string item in extensions)
                 filter += "*" + item + " ";
             filter += ")|";
-            foreach (string item in extension)
-                filter += "*" + item + "; ";
+            foreach (string item in extensions)
+                filter += "*" + item + ";";
             filter = filter.Remove(filter.Length - 1);
 
+            return filter;
+        }
+        public static string createFilterSFD(Dictionary<string, List<string>> extensionsDict)
+        {
+            //создает фильтр SaveFileDialog/OpenFileDialog , 
+            //переберая словарь(Ключ - произвольное имя, Значение - лист стринг с расширениями) допустимых расширений; пример вызова ниже
+
+            //List<string> musicExtension = new List<string>() { ".wav", ".mp3" };
+            //List<string> videoExtension = new List<string>() { ".mp4" };
+            //Dictionary<string, List<string>> extensionsDict = new Dictionary<string, List<string>>();
+            //extensionsDict.Add("music files ", musicExtension);
+            //extensionsDict.Add("video files ", videoExtension);
+            //sfd.Filter = StaticFunc.createFilterSFD(extensionsDict);
+
+            string filter = "";
+            foreach (KeyValuePair<string, List<string>> pair in extensionsDict)
+            {
+                filter += pair.Key + " (";
+                foreach (string item in pair.Value)
+                    filter += "*" + item + " ";
+                filter += ")|";
+                foreach (string item in pair.Value)
+                    filter += "*" + item + ";";
+                filter = filter.Remove(filter.Length - 1);
+
+                filter += "|";
+            }
+            filter = filter.Remove(filter.Length - 1);
 
             return filter;
         }
