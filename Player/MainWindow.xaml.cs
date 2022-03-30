@@ -10,6 +10,7 @@ using Microsoft.Win32;
 using System.Media;
 using System.Windows.Media;
 using System.Diagnostics;
+using Newtonsoft.Json;
 
 using MessageBox = System.Windows.MessageBox;
 
@@ -174,7 +175,7 @@ namespace Player
             //sfd.Filter = "cnt64 files (*.cnt64)|*.cnt64|All files (*.*)|*.*";
             sfd.CheckPathExists = true;
             sfd.RestoreDirectory = false;
-            sfd.Title = "выберите директрорию и введите имя нового плейлиста";
+            sfd.Title = "выберите директрорию с музыкой и введите имя нового плейлиста";
 
             if (playlists.Count > 0)
             {
@@ -199,7 +200,7 @@ namespace Player
                 if (!replace)
                 {
                     fileWay = Environment.CurrentDirectory + @"\ways\" + fileName + ".txt";
-                    StaticFunc.checkAndCreateDirectoryExist(Environment.CurrentDirectory + @"\ways");
+                    StaticFunc.checkAndCreateDirectory(Environment.CurrentDirectory + @"\ways");
 
                     bool flag = File.Exists(fileWay);
                     if (flag)
@@ -215,12 +216,12 @@ namespace Player
                     }
 
                     StreamWriter streamWriter = new StreamWriter(fileWay);
-
                     foreach (var file in directoryInfo.GetFiles())//
                     {
                         if (musicExtension.Contains(file.Extension))
                             streamWriter.WriteLine(file.FullName);
                     }
+                    
                     streamWriter.Close();
 
                     playlistNames.Add(fileName);
@@ -238,7 +239,14 @@ namespace Player
 
         private void ButtonAddTrack_Click(object sender, RoutedEventArgs e)
         {
+            System.Windows.Forms.SaveFileDialog sfd = new System.Windows.Forms.SaveFileDialog();
+            sfd.Filter = StaticFunc.createFilterStringSFD(musicExtension);
+            sfd.CheckPathExists = true;
+            sfd.RestoreDirectory = false;
+            sfd.Title = "выберите треки";
 
+            if (sfd.ShowDialog() != System.Windows.Forms.DialogResult.OK)
+                return;
         }
 
         private void BtnDeletePlaylist_Click(object sender, RoutedEventArgs e)
@@ -287,6 +295,13 @@ namespace Player
 
 
         ////////завершение работы и пасхалки
+        
+        private void killAllprocMusicFilesTXT()
+        {
+            foreach (string item in playlistNames)
+                StaticFunc.killProcessByName(item, "Notepad");
+        }
+
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (MessageBox.Show("Завершение работы?", "Внимание!",
