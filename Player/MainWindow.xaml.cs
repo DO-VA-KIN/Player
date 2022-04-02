@@ -11,9 +11,10 @@ using System.Media;
 using System.Windows.Media;
 using System.Diagnostics;
 using Newtonsoft.Json;
+using System.Threading;
 
 using MessageBox = System.Windows.MessageBox;
-
+using MenuItem = System.Windows.Controls.MenuItem;
 
 namespace Player
 {
@@ -30,14 +31,78 @@ namespace Player
         private List<string> musicExtension = new List<string>() { ".wav", ".mp3" };//допустимые форматы музыки
 
         private int musicNum = 0;//номер текущего трека
-        private bool replace = false;//перенос музыки в папку программы (если нет, то сохраняются пути)
-        //private uint sumMusic = 1000;//максимальное кол-во путей треков подгружаемых
+        private bool musicPlay = true;//играет ли музыка
+        private bool[] musicUpdate = new bool[3] { false, false, false };
+        //происходит ли обновление плейлистов в данный момент/вызывались ли события во время обновления/вызвано устранение неполадок                                                          
+
+
+
+        ///////меню
+        private void MenuSettings_Click(object sender, RoutedEventArgs e)
+        {
+            MenuItem menuItem = sender as MenuItem;
+
+            switch (menuItem.Header)
+            {
+                case "Уведомления":
+                    menuItem.IsChecked = !menuItem.IsChecked;
+                    Settings.messagesActive = menuItem.IsChecked;
+                    Settings.GetInstance.SaveSettings();
+                    break;
+                case "Предупреждения":
+                    menuItem.IsChecked = !menuItem.IsChecked;
+                    Settings.warningDelPlaylist = menuItem.IsChecked;
+                    Settings.warningDelTrack = menuItem.IsChecked;
+                    Settings.warningExistPlaylist = menuItem.IsChecked;
+                    Settings.GetInstance.SaveSettings();
+                    break;
+                case "Музыка сразу":
+                    menuItem.IsChecked = !menuItem.IsChecked;
+                    Settings.musicAtTheStart = menuItem.IsChecked;
+                    Settings.GetInstance.SaveSettings();
+                    break;
+                case "Устр. неполадок":
+                    if (MessageBox.Show("Последовательное завершение всех процессов программы и перезапуск?", "Внимание!",
+                        MessageBoxButton.YesNo,MessageBoxImage.Question,MessageBoxResult.Cancel,
+                        System.Windows.MessageBoxOptions.ServiceNotification) != MessageBoxResult.Yes)
+                            { return; }
+                    musicUpdate[2] = true;
+                    mediaPlayer.Close();
+                    KillAllprocMusicFilesTXT();
+                    System.Windows.Forms.Application.Restart();
+                    System.Windows.Application.Current.Shutdown();
+                    break;
+                case "Настройки":
+                    MessageBox.Show("В разработке");
+                    break;
+            }
+        }
+
+
+
+
 
 
 
         ////////общее
-        public void Window_Loaded(object sender, RoutedEventArgs e)
+        public void Window1_Loaded(object sender, RoutedEventArgs e)
         {
+            Settings.GetInstance.InitializeSettings();
+            foreach (MenuItem menuItem in Menu_Settings.Items)
+            {
+                switch (menuItem.Header)
+                {
+                    case "Уведомления":
+                        menuItem.IsChecked = Settings.messagesActive;
+                        break;
+                    case "Предупреждения":
+                        menuItem.IsChecked = Settings.warningDelPlaylist;
+                        break;
+                    case "Музыка сразу":
+                        menuItem.IsChecked = Settings.musicAtTheStart;
+                        break;
+                }
+            }
             mediaPlayer.MediaEnded += MediaPlayer_MediaEnded;
 
             try
@@ -59,7 +124,7 @@ namespace Player
                 }
             }
             catch (Exception ex)
-            { MessageBox.Show(ex.Message); }
+            { if(Settings.messagesActive) MessageBox.Show(ex.Message); }
         }
         //////
 
@@ -69,6 +134,9 @@ namespace Player
         ///////проигрывание музыки
         private void MediaPlayer_MediaEnded(object sender, EventArgs e)
         {
+            if (musicUpdate[0])
+            { musicUpdate[1] = true; return; }
+
             try
             {
                 if (musicNum == music.Count - 1)
@@ -77,24 +145,21 @@ namespace Player
 
                 ComboBoxTracks.SelectedIndex = musicNum;
             }
-            catch (Exception ex) { MessageBox.Show(ex.Message); }
+            catch (Exception ex) 
+            { if(Settings.messagesActive) MessageBox.Show(ex.Message); }
         }
 
         private void ButtonMusicPlay_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                if (mediaPlayer.IsMuted)
-                {
-                    mediaPlayer.Play(); mediaPlayer.IsMuted = false;
-                }
+                if (!musicPlay)
+                { mediaPlayer.Play(); musicPlay = true; }
                 else
-                {
-                    mediaPlayer.Pause(); mediaPlayer.IsMuted = true;
-                }
+                { mediaPlayer.Pause(); musicPlay = false; }
             }
             catch (Exception ex)
-            { MessageBox.Show(ex.Message); }
+            { if (Settings.messagesActive) MessageBox.Show(ex.Message); }
         }
 
         private void ComboBoxTracks_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -103,7 +168,8 @@ namespace Player
             {
                 musicNum = ComboBoxTracks.SelectedIndex;
                 mediaPlayer.Open(new Uri(music[musicNum]));
-                mediaPlayer.Play();
+                if (musicPlay)
+                    mediaPlayer.Play();
 
                 LabelMusic.Content = musicNames[musicNum];
             }
@@ -123,12 +189,11 @@ namespace Player
                 return;
 
             bool errFileExist = false;//существует ли файл, записанный в плейлист
-
             string fileWay = playlists[ComboBoxPlaylists.SelectedIndex];
-            StreamReader streamReader = new StreamReader(fileWay);
 
             try
             {
+                StreamReader streamReader = new StreamReader(fileWay);
                 while (!streamReader.EndOfStream)
                 {
                     string str = streamReader.ReadLine();
@@ -136,6 +201,7 @@ namespace Player
                         music.Add(str);
                     else errFileExist = true;
                 }
+                streamReader.Close();
 
                 foreach (string item in music)
                     musicNames.Add(StaticFunc.parseWay(item));
@@ -149,13 +215,17 @@ namespace Player
                     StreamWriter streamWriter = new StreamWriter(fileWay, false);
                     foreach (string musicWay in music)
                         streamWriter.WriteLine(musicWay);
+                    streamWriter.Close();
                 }
             }
-            catch (Exception ex) { MessageBox.Show(ex.Message); }
+            catch (Exception ex) 
+            { if (Settings.messagesActive) MessageBox.Show(ex.Message); }
 
             finally
             {
-                streamReader.Close();
+                if (Settings.musicAtTheStart)
+                    musicPlay = true;
+                else musicPlay = false;
 
                 if (ComboBoxTracks.Items.Count > 0)
                     ComboBoxTracks.SelectedIndex = 0;
@@ -172,8 +242,8 @@ namespace Player
             string fileName;//название нового плейлиста
 
             System.Windows.Forms.SaveFileDialog sfd = new System.Windows.Forms.SaveFileDialog();
-            //sfd.Filter = "cnt64 files (*.cnt64)|*.cnt64|All files (*.*)|*.*";
             sfd.CheckPathExists = true;
+            sfd.CheckFileExists = false;
             sfd.RestoreDirectory = false;
             sfd.Title = "выберите директрорию с музыкой и введите имя нового плейлиста";
 
@@ -197,56 +267,93 @@ namespace Player
                 List<string> allFiles = new List<string>();
                 fileName = StaticFunc.parseWay(sfd.FileName);
 
-                if (!replace)
+                fileWay = Environment.CurrentDirectory + @"\ways\" + fileName + ".txt";
+                StaticFunc.checkAndCreateDirectory(Environment.CurrentDirectory + @"\ways");
+
+                bool flag = File.Exists(fileWay);
+                if (flag && Settings.warningExistPlaylist)
                 {
-                    fileWay = Environment.CurrentDirectory + @"\ways\" + fileName + ".txt";
-                    StaticFunc.checkAndCreateDirectory(Environment.CurrentDirectory + @"\ways");
-
-                    bool flag = File.Exists(fileWay);
-                    if (flag)
-                    {
-                        if (MessageBox.Show("Переписать?", "Плейлист уже существует",
-                        MessageBoxButton.OKCancel,
-                        MessageBoxImage.Question,
-                        MessageBoxResult.Cancel,
-                        System.Windows.MessageBoxOptions.ServiceNotification) != MessageBoxResult.OK)
-                        {
-                            return;
-                        }
-                    }
-
-                    StreamWriter streamWriter = new StreamWriter(fileWay);
-                    foreach (var file in directoryInfo.GetFiles())//
-                    {
-                        if (musicExtension.Contains(file.Extension))
-                            streamWriter.WriteLine(file.FullName);
-                    }
-                    
-                    streamWriter.Close();
-
-                    playlistNames.Add(fileName);
-                    playlists.Add(fileWay);
-
-                    if (!flag)
-                        ComboBoxPlaylists.Items.Add(fileName);
-                    ComboBoxPlaylists.SelectedItem = fileName;
-                    //ComboBoxPlaylists.SelectedIndex = ComboBoxPlaylists.Items.Count - 1;
+                    if (MessageBox.Show("Переписать?", "Плейлист уже существует",
+                    MessageBoxButton.YesNo,MessageBoxImage.Question,MessageBoxResult.Cancel,
+                    System.Windows.MessageBoxOptions.ServiceNotification) != MessageBoxResult.Yes)
+                    { return; }
                 }
-                else { }//
+
+                StreamWriter streamWriter = new StreamWriter(fileWay);
+                foreach (var file in directoryInfo.GetFiles())//
+                {
+                    if (musicExtension.Contains(file.Extension))
+                        streamWriter.WriteLine(file.FullName);
+                }
+
+                streamWriter.Close();
+
+                playlistNames.Add(fileName);
+                playlists.Add(fileWay);
+
+                if (!flag)
+                    ComboBoxPlaylists.Items.Add(fileName);
+
+                if (ComboBoxPlaylists.SelectedItem.ToString() == fileName)
+                    ComboBoxPlaylists_SelectionChanged(null, null);
+                else ComboBoxPlaylists.SelectedItem = fileName;
             }
-            catch (Exception ex) { MessageBox.Show(ex.Message); }
+            catch (Exception ex) 
+            { if (Settings.messagesActive) MessageBox.Show(ex.Message); }
         }
 
         private void ButtonAddTrack_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.Forms.SaveFileDialog sfd = new System.Windows.Forms.SaveFileDialog();
-            sfd.Filter = StaticFunc.createFilterStringSFD(musicExtension);
-            sfd.CheckPathExists = true;
-            sfd.RestoreDirectory = false;
-            sfd.Title = "выберите треки";
+            System.Windows.Forms.OpenFileDialog ofd = new System.Windows.Forms.OpenFileDialog();
+            ofd.Filter = StaticFunc.createFilterStringSFD(musicExtension);
+            ofd.CheckPathExists = true;
+            ofd.RestoreDirectory = false;
+            ofd.Multiselect = true;
+            ofd.Title = "выберите треки";
 
-            if (sfd.ShowDialog() != System.Windows.Forms.DialogResult.OK)
+            if (ofd.ShowDialog() != System.Windows.Forms.DialogResult.OK)
                 return;
+
+            musicUpdate[0] = true;
+            ComboBoxPlaylists.IsEnabled = false;
+            ComboBoxTracks.IsEnabled = false;
+
+            List<string> existTracksList = new List<string>();
+            List<string> localList = new List<string>();
+            foreach (string fileName in ofd.FileNames)
+            {
+                if (!music.Contains(fileName))
+                    localList.Add(fileName);
+                else existTracksList.Add(fileName);
+            }
+
+            int newMusicNum = musicNum + 1;
+            music.InsertRange(newMusicNum, localList);
+            localList = StaticFunc.parseWays(localList);
+            musicNames.InsertRange(newMusicNum, localList);
+            foreach (string lName in localList)
+            { ComboBoxTracks.Items.Insert(newMusicNum, lName); newMusicNum++; }
+
+            try
+            {
+                StreamWriter streamWriter = new StreamWriter(playlists[ComboBoxPlaylists.SelectedIndex]);
+                foreach (string track in music)//
+                    streamWriter.WriteLine(track);
+                streamWriter.Close();
+            }
+            catch(Exception ex)
+            { if (Settings.messagesActive) MessageBox.Show(ex.Message); }
+
+            musicUpdate[0] = false;
+            ComboBoxPlaylists.IsEnabled = true;
+            ComboBoxTracks.IsEnabled = true;
+            if (musicUpdate[1])
+                MediaPlayer_MediaEnded(null, null);
+            musicUpdate[1] = false;
+
+            if (existTracksList.Count != 0 && Settings.messagesActive)
+                MessageBox.Show("Нельзя добавить треки, которые уже есть в плейлисте\n"+existTracksList,
+                    "Внимание!", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         private void BtnDeletePlaylist_Click(object sender, RoutedEventArgs e)
@@ -254,12 +361,13 @@ namespace Player
             if (ComboBoxPlaylists.SelectedIndex == -1)
                 return;
 
-            if (MessageBox.Show("Удалить плейлист?", "Внимание!",
-                MessageBoxButton.OKCancel,
-                MessageBoxImage.Question,
-                MessageBoxResult.Cancel,
-                System.Windows.MessageBoxOptions.ServiceNotification) != MessageBoxResult.OK)
-            { return; }
+            if (Settings.warningDelPlaylist)
+            {
+                if (MessageBox.Show("Удалить плейлист?", "Внимание!",
+                MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Cancel,
+                System.Windows.MessageBoxOptions.ServiceNotification) != MessageBoxResult.Yes)
+                { return; }
+            }
 
             int numDelete = ComboBoxPlaylists.SelectedIndex;
             StaticFunc.killProcessByName(playlistNames[numDelete], "Notepad");
@@ -276,13 +384,38 @@ namespace Player
                 else if (playlists.Count != 0 & numDelete != 0)
                     ComboBoxPlaylists.SelectedIndex = numDelete - 1;
             }
-            catch(Exception ex) { MessageBox.Show(ex.Message); }
+            catch(Exception ex) 
+            { if (Settings.messagesActive) MessageBox.Show(ex.Message); }
         }
 
         private void BtnDeleteTrack_Click(object sender, RoutedEventArgs e)
         {
-            //int numDelFile = ComboBoxTracks.SelectedIndex;
-            //ComboBoxTracks.Items.Remove(numDelFile);
+            if (Settings.warningDelTrack)
+            {
+                if (MessageBox.Show("Удалить трек?", "Внимание!",
+                MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Cancel,
+                System.Windows.MessageBoxOptions.ServiceNotification) != MessageBoxResult.Yes)
+                { return; }
+            }
+
+            ComboBoxPlaylists.IsEnabled = false;
+
+            MediaPlayer_MediaEnded(null, null);
+            ComboBoxTracks.Items.RemoveAt(musicNum - 1);
+            music.RemoveAt(musicNum - 1);
+            musicNames.RemoveAt(musicNum - 1);
+
+            try
+            {
+                StreamWriter streamWriter = new StreamWriter(playlists[ComboBoxPlaylists.SelectedIndex]);
+                foreach (string track in music)//
+                    streamWriter.WriteLine(track);
+                streamWriter.Close();
+            }
+            catch (Exception ex) 
+            { if (Settings.messagesActive) MessageBox.Show(ex.Message); }
+
+            ComboBoxPlaylists.IsEnabled = true;
         }
         /////
 
@@ -296,29 +429,25 @@ namespace Player
 
         ////////завершение работы и пасхалки
         
-        private void killAllprocMusicFilesTXT()
+        private void KillAllprocMusicFilesTXT()
         {
             foreach (string item in playlistNames)
                 StaticFunc.killProcessByName(item, "Notepad");
         }
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void Window1_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (MessageBox.Show("Завершение работы?", "Внимание!",
-                    MessageBoxButton.OKCancel,
-                    MessageBoxImage.Question,
-                    MessageBoxResult.Cancel,
-                    System.Windows.MessageBoxOptions.ServiceNotification) != MessageBoxResult.OK)
+            if (musicUpdate[2] != true)
             {
-                e.Cancel = true;
+                if (MessageBox.Show("Завершение работы?", "Внимание!",
+                        MessageBoxButton.OKCancel, MessageBoxImage.Question, MessageBoxResult.Cancel,
+                        System.Windows.MessageBoxOptions.ServiceNotification) != MessageBoxResult.OK)
+                { e.Cancel = true; return; }
             }
-            else
-            {
-                try { mediaPlayer.Close(); }
-                catch (Exception ex)
-                { MessageBox.Show(ex.Message); }
-            }
-        }
 
+            try { mediaPlayer.Close(); }
+            catch (Exception ex)
+            { if (Settings.messagesActive) MessageBox.Show(ex.Message); }
+        }
     }
 }

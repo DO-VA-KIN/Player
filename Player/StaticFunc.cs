@@ -21,10 +21,17 @@ namespace Player
 
             way = way.Remove(end, way.Length - end);
             way = way.Remove(0, beg + 1);
+
             return way;
         }
 
+        public static List<string> parseWays(List<string> ways)
+        {
+            for (int i = 0; i < ways.Count; i++)
+                ways[i] = parseWay(ways[i]);
 
+            return ways;
+        }
 
         public static string createFilterStringSFD(List<string> extensions)
         {

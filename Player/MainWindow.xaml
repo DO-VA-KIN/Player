@@ -5,16 +5,24 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Player"
         mc:Ignorable="d"
-        x:Name="Window1" Title="Ghost Плеер" Height="400" Width="800" ResizeMode="CanMinimize" Loaded="Window_Loaded" Closing="Window_Closing" Icon="images/icon/itunes.png" WindowStartupLocation="CenterScreen" BorderBrush="Black" BorderThickness="0" FontSize="14">
+        x:Name="Window1" Title="Ghost Плеер" Height="400" Width="800" ResizeMode="CanMinimize" Loaded="Window1_Loaded" Closing="Window1_Closing" Icon="images/icon/itunes.png" WindowStartupLocation="CenterScreen" BorderBrush="Black" BorderThickness="0" FontSize="14">
     <Grid>
         <Menu Grid.Row="0" Background="AliceBlue" FontWeight="Medium" FontSize="13">
-            <MenuItem Header="Файл">
-                <MenuItem x:Name="Menu_Close" Header="Закрыть"/>
+            <MenuItem x:Name="Menu_File" Header="Файл">
+                <MenuItem Header="Закрыть"/>
+                <MenuItem Header="Расположение"/>
+                <MenuItem Header="О разработчике"/>
             </MenuItem>
-            <MenuItem x:Name="Menu_Settings" Header="Настройка"/>
+            <MenuItem x:Name="Menu_Settings" Header="Настройка">
+                <MenuItem Header="Уведомления" IsChecked="True" Click="MenuSettings_Click"/>
+                <MenuItem Header="Предупреждения" IsChecked="True" Click="MenuSettings_Click"/>
+                <MenuItem Header="Музыка сразу" IsChecked="True" Click="MenuSettings_Click"/>
+                <MenuItem Header="Устр. неполадок" Click="MenuSettings_Click"/>
+                <MenuItem Header="Настройки" Click="MenuSettings_Click"/>
+            </MenuItem>
         </Menu>
-
         <Label x:Name="LabelMusic" Content= "музыка не найдена" HorizontalAlignment="Left" FlowDirection="LeftToRight" Margin="0,330,0,0" VerticalAlignment="Stretch" Width="794" FontSize="18" FontFamily="Times New Roman"/>
+        <Slider x:Name="sliderMusic" Margin="10,292,508.6,52.4"/>
         <Button x:Name="ButtonMusicPlay" Content="" ToolTip="Запуск/остановка проигрывателя" HorizontalAlignment="Left" Margin="333,281,0,0" VerticalAlignment="Top" Width="41" Height="37" Cursor="Hand" Click="ButtonMusicPlay_Click" Visibility="Visible">
             <Button.OpacityMask>
                 <ImageBrush ImageSource="Images/icon/musicPlay.png"/>
