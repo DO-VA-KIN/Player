@@ -24,6 +24,9 @@ namespace Player
     public partial class MainWindow : Window
     {
         private MediaPlayer mediaPlayer = new MediaPlayer();//сам плеер
+        System.Windows.Threading.DispatcherTimer timer = new System.Windows.Threading.DispatcherTimer();
+        //таймер для следящий за позицией текущего трека
+
         private List<string> playlistNames = new List<string>();//названия плейлистов
         private List<string> playlists = new List<string>();//пути плейлистов
         private List<string> musicNames = new List<string>();//названия песен
@@ -87,6 +90,10 @@ namespace Player
         ////////общее
         public void Window1_Loaded(object sender, RoutedEventArgs e)
         {
+            timer.Interval = new TimeSpan(0, 0, 0, 0, 500);
+            timer.Tick += Timer_Tick;
+            timer.Start();
+
             Settings.GetInstance.InitializeSettings();
             foreach (MenuItem menuItem in Menu_Settings.Items)
             {
@@ -126,7 +133,7 @@ namespace Player
             catch (Exception ex)
             { if(Settings.messagesActive) MessageBox.Show(ex.Message); }
         }
-        //////
+
 
 
 
@@ -233,8 +240,53 @@ namespace Player
         }
 
 
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            if (!mediaPlayer.NaturalDuration.HasTimeSpan)
+                return;
+            
+            sliderMusic.Value = mediaPlayer.Position.TotalSeconds / mediaPlayer.NaturalDuration.TimeSpan.TotalSeconds * 100;
+        }
 
-///////добавление и удаление треков/плейлистов
+        private void SliderMusic_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            try
+            {
+                if ((e.NewValue - e.OldValue) < (10 * timer.Interval.TotalSeconds * mediaPlayer.SpeedRatio))
+                {
+                    sliderMusic.SelectionEnd = sliderMusic.Value;
+                    string strPosition = mediaPlayer.Position.ToString();
+                    int lInd = strPosition.LastIndexOf(".");
+                    if (lInd != -1)
+                        strPosition = strPosition.Remove(lInd, strPosition.Length - lInd);
+                    LabelMusicPosition.Content = strPosition;
+                }
+
+                else
+                {
+                    double totalSeconds = mediaPlayer.NaturalDuration.TimeSpan.TotalSeconds;
+                    double factor = (sliderMusic.Value / sliderMusic.Maximum);
+                    int DurationHours = (int)((totalSeconds / 3600) * factor);
+                    totalSeconds -= (DurationHours * 3600);
+                    int DurationMin = (int)((totalSeconds / 60) * factor);
+                    totalSeconds -= (DurationMin * 60);
+                    int DurationSec = (int)(totalSeconds * factor);
+
+                    mediaPlayer.Position = new TimeSpan(DurationHours, DurationMin, DurationSec);
+                    LabelMusicPosition.Content = mediaPlayer.Position.ToString();
+                    sliderMusic.SelectionEnd = sliderMusic.Value;
+                }
+            }
+            catch (Exception ex) { if (Settings.messagesActive) MessageBox.Show(ex.Message); }
+        }
+        private void SliderMusic_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+           
+        }
+
+
+
+        ///////добавление и удаление треков/плейлистов
         private void ButtonNewPlaylist_Click(object sender, RoutedEventArgs e)
         {
             string directory;//директория с музыкой(выбранная пользователем)
@@ -294,9 +346,14 @@ namespace Player
                 if (!flag)
                     ComboBoxPlaylists.Items.Add(fileName);
 
-                if (ComboBoxPlaylists.SelectedItem.ToString() == fileName)
-                    ComboBoxPlaylists_SelectionChanged(null, null);
-                else ComboBoxPlaylists.SelectedItem = fileName;
+                if (ComboBoxPlaylists.SelectedIndex == -1)
+                    ComboBoxPlaylists.SelectedIndex = 0;
+                else
+                {
+                    if (ComboBoxPlaylists.SelectedItem.ToString() == fileName)
+                        ComboBoxPlaylists_SelectionChanged(null, null);
+                    else ComboBoxPlaylists.SelectedItem = fileName;
+                }
             }
             catch (Exception ex) 
             { if (Settings.messagesActive) MessageBox.Show(ex.Message); }
@@ -449,5 +506,6 @@ namespace Player
             catch (Exception ex)
             { if (Settings.messagesActive) MessageBox.Show(ex.Message); }
         }
+
     }
 }
