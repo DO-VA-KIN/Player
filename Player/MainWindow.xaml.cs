@@ -69,11 +69,22 @@ namespace Player
                         MessageBoxButton.YesNo,MessageBoxImage.Question,MessageBoxResult.Cancel,
                         System.Windows.MessageBoxOptions.ServiceNotification) != MessageBoxResult.Yes)
                             { return; }
-                    musicUpdate[2] = true;
-                    mediaPlayer.Close();
-                    KillAllprocMusicFilesTXT();
-                    System.Windows.Forms.Application.Restart();
-                    System.Windows.Application.Current.Shutdown();
+                    try
+                    {
+                        musicUpdate[2] = true;
+                        mediaPlayer.Close();
+                        KillAllprocMusicFilesTXT();
+                        File.Delete(Environment.CurrentDirectory + @"\Settings.xml");
+                        System.Windows.Forms.Application.Restart();
+                        System.Windows.Application.Current.Shutdown();
+                    }
+                    catch { MessageBox.Show("Для восстановления работоспособности побробуйте: " +
+                        "\n1) Удалите файл 'Settings.xml' в папке с программой" +
+                        "\n2) Завершите все процессы с текстовыми файлами из папки 'ways'" +
+                        "\n☼ или перезагрузи комп ♥" +
+                        "\n♥ или переустанови прогу☼",
+                        "Программа не смогла устранить неполадки",
+                        MessageBoxButton.OK, MessageBoxImage.Warning); }
                     break;
                 case "Настройки":
                     MessageBox.Show("В разработке");
@@ -91,7 +102,7 @@ namespace Player
         public void Window1_Loaded(object sender, RoutedEventArgs e)
         {
             timer.Interval = new TimeSpan(0, 0, 0, 0, 500);
-            timer.Tick += Timer_Tick;
+            timer.Tick += SliderMusic_ValueChanged;
             timer.Start();
 
             Settings.GetInstance.InitializeSettings();
@@ -240,44 +251,36 @@ namespace Player
         }
 
 
-        private void Timer_Tick(object sender, EventArgs e)
-        {
-            if (!mediaPlayer.NaturalDuration.HasTimeSpan)
-                return;
-            
-            sliderMusic.Value = mediaPlayer.Position.TotalSeconds / mediaPlayer.NaturalDuration.TimeSpan.TotalSeconds * 100;
-        }
-
-        private void SliderMusic_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private double[] oldValues = new double[2] { 0, 0 };
+        private void SliderMusic_ValueChanged(object sender, EventArgs e)
         {
             try
             {
-                if ((e.NewValue - e.OldValue) < (10 * timer.Interval.TotalSeconds * mediaPlayer.SpeedRatio))
+                if (!mediaPlayer.NaturalDuration.HasTimeSpan)
+                    return;
+                
+                mediaPlayer.Pause();
+                timer.Stop();
+
+                if (Math.Abs(oldValues[0] - sliderMusic.Value) < (10 * timer.Interval.TotalSeconds * mediaPlayer.SpeedRatio))
                 {
+                    sliderMusic.Value = sliderClass.sliderValueCalculate(mediaPlayer.Position.TotalSeconds, mediaPlayer.NaturalDuration.TimeSpan.TotalSeconds, sliderMusic.Maximum);
                     sliderMusic.SelectionEnd = sliderMusic.Value;
-                    string strPosition = mediaPlayer.Position.ToString();
-                    int lInd = strPosition.LastIndexOf(".");
-                    if (lInd != -1)
-                        strPosition = strPosition.Remove(lInd, strPosition.Length - lInd);
-                    LabelMusicPosition.Content = strPosition;
+                    LabelMusicPosition.Content = sliderClass.timeForLabel(mediaPlayer.Position.ToString());
                 }
 
                 else
                 {
-                    double totalSeconds = mediaPlayer.NaturalDuration.TimeSpan.TotalSeconds;
-                    double factor = (sliderMusic.Value / sliderMusic.Maximum);
-                    int DurationHours = (int)((totalSeconds / 3600) * factor);
-                    totalSeconds -= (DurationHours * 3600);
-                    int DurationMin = (int)((totalSeconds / 60) * factor);
-                    totalSeconds -= (DurationMin * 60);
-                    int DurationSec = (int)(totalSeconds * factor);
+                    mediaPlayer.Position = sliderClass.mediaPosCalculate(mediaPlayer.NaturalDuration.TimeSpan.TotalSeconds,
+                        sliderMusic.Value, sliderMusic.Maximum);
 
-                    mediaPlayer.Position = new TimeSpan(DurationHours, DurationMin, DurationSec);
                     LabelMusicPosition.Content = mediaPlayer.Position.ToString();
                     sliderMusic.SelectionEnd = sliderMusic.Value;
                 }
             }
             catch (Exception ex) { if (Settings.messagesActive) MessageBox.Show(ex.Message); }
+            mediaPlayer.Play();
+            timer.Start();
         }
         private void SliderMusic_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
