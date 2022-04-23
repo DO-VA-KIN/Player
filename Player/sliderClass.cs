@@ -8,42 +8,49 @@ namespace Player
 {
     class sliderClass
     {
-        public static double[] oldValues = new double[2] { 0, 0 };
-        private static bool flipFlop = true;
+        public static double oldValue = 0;
+        public static bool retValueChanged = false;
 
 
-        public static string timeForLabel(string mediaPos)//вернет время для лейбла
+        public static void refresh()
         {
-            int lInd = mediaPos.LastIndexOf(".");
+            oldValue = 0;
+            retValueChanged = false;
+        }
+
+
+        public static string timeForLabel(TimeSpan mediaPos)//вернет время для лейбла
+        {
+            double d = Math.Round(mediaPos.TotalSeconds, 1);
+            TimeSpan ts = TimeSpan.FromSeconds(d);
+            string str = ts.ToString();
+
+            int lInd = str.LastIndexOf(".");
             if (lInd != -1)
-                mediaPos = mediaPos.Remove(lInd, mediaPos.Length - lInd);
-            return mediaPos;
+                str = str.Remove(lInd, str.Length - lInd);
+            return str;
         }
 
         public static double sliderValueCalculate(double posTotalSec, double durationTotalSec, double sliderValueMax)
         {
             double sliderValue = posTotalSec / durationTotalSec * sliderValueMax;
-
-            if (flipFlop)
-            { oldValues[0] = sliderValue; flipFlop = false; }
-            else { oldValues[1] = sliderValue; flipFlop = true; }
+            oldValue = sliderValue;
 
             return sliderValue;
         }
 
         public static TimeSpan mediaPosCalculate(double durationTotalSec, double sliderValue, double sliderValueMax)
         {
-            double totalSeconds = durationTotalSec;
             double factor = (sliderValue / sliderValueMax);
-            int DurationHours = (int)((totalSeconds / 3600) * factor);
-            totalSeconds -= (DurationHours * 3600);
-            int DurationMin = (int)((totalSeconds / 60) * factor);
-            totalSeconds -= (DurationMin * 60);
-            int DurationSec = (int)(totalSeconds * factor);
+            double totalSeconds = durationTotalSec * factor;
 
-            if (flipFlop)
-            { oldValues[0] = sliderValue; flipFlop = false; }
-            else { oldValues[1] = sliderValue; flipFlop = true; }
+            int DurationHours = (int)((totalSeconds / 3600));
+            totalSeconds -= (DurationHours * 3600);
+            int DurationMin = (int)((totalSeconds / 60));
+            totalSeconds -= (DurationMin * 60);
+            int DurationSec = (int)(totalSeconds);
+
+            oldValue = sliderValue;
 
             return new TimeSpan(DurationHours, DurationMin, DurationSec);
         }

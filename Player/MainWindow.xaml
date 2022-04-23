@@ -22,7 +22,7 @@
             </MenuItem>
         </Menu>
         <Label x:Name="LabelMusic" Content= "музыка не найдена" HorizontalAlignment="Left" FlowDirection="LeftToRight" Margin="0,330,0,0" VerticalAlignment="Stretch" Width="794" FontSize="18" FontFamily="Times New Roman"/>
-        <Slider x:Name="sliderMusic" MaxHeight="18" MaxWidth="200" Margin="10,275,582,65" Minimum="0" Maximum="100" SelectionStart="0" IsMoveToPointEnabled="True" IsSelectionRangeEnabled="true" PreviewMouseUp="SliderMusic_MouseUp" ValueChanged="SliderMusic_ValueChanged"/>
+        <Slider x:Name="sliderMusic" MaxHeight="18" MaxWidth="200" Margin="10,275,582,65" Minimum="0" Maximum="100" SelectionStart="0" IsMoveToPointEnabled="True" IsSelectionRangeEnabled="true" ValueChanged="SliderMusic_ValueChanged"/>
         <Label x:Name="LabelMusicPosition" Content= "00.00.00" HorizontalContentAlignment="Left" HorizontalAlignment="Left" FlowDirection="LeftToRight" Margin="198,275,0,65" VerticalAlignment="Stretch" MaxHeight="22" MaxWidth="100" FontSize="12" FontFamily="Times New Roman" Width="99"/>
         <Button x:Name="ButtonMusicPlay" Content="" ToolTip="Запуск/остановка проигрывателя" HorizontalAlignment="Left" Margin="342,275,0,0" VerticalAlignment="Top" Width="41" Height="37" Cursor="Hand" Click="ButtonMusicPlay_Click" Visibility="Visible">
             <Button.OpacityMask>

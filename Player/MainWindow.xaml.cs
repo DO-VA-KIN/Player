@@ -251,40 +251,32 @@ namespace Player
         }
 
 
-        private double[] oldValues = new double[2] { 0, 0 };
         private void SliderMusic_ValueChanged(object sender, EventArgs e)
         {
             try
             {
-                if (!mediaPlayer.NaturalDuration.HasTimeSpan)
-                    return;
-                
-                mediaPlayer.Pause();
-                timer.Stop();
+                if (sliderClass.retValueChanged) return;
+                if (!mediaPlayer.NaturalDuration.HasTimeSpan) return;
 
-                if (Math.Abs(oldValues[0] - sliderMusic.Value) < (10 * timer.Interval.TotalSeconds * mediaPlayer.SpeedRatio))
+                if (Math.Abs(sliderClass.oldValue - sliderMusic.Value) < (10 * timer.Interval.TotalSeconds * mediaPlayer.SpeedRatio))
                 {
-                    sliderMusic.Value = sliderClass.sliderValueCalculate(mediaPlayer.Position.TotalSeconds, mediaPlayer.NaturalDuration.TimeSpan.TotalSeconds, sliderMusic.Maximum);
-                    sliderMusic.SelectionEnd = sliderMusic.Value;
-                    LabelMusicPosition.Content = sliderClass.timeForLabel(mediaPlayer.Position.ToString());
+                    sliderClass.retValueChanged = true;
+                    sliderMusic.Value = sliderClass.sliderValueCalculate(mediaPlayer.Position.TotalSeconds,
+                        mediaPlayer.NaturalDuration.TimeSpan.TotalSeconds, sliderMusic.Maximum);
+                    sliderClass.retValueChanged = false;
                 }
 
                 else
                 {
                     mediaPlayer.Position = sliderClass.mediaPosCalculate(mediaPlayer.NaturalDuration.TimeSpan.TotalSeconds,
                         sliderMusic.Value, sliderMusic.Maximum);
-
-                    LabelMusicPosition.Content = mediaPlayer.Position.ToString();
-                    sliderMusic.SelectionEnd = sliderMusic.Value;
                 }
+
+                sliderMusic.SelectionEnd = sliderMusic.Value;
+                LabelMusicPosition.Content = sliderClass.timeForLabel(mediaPlayer.Position);
             }
-            catch (Exception ex) { if (Settings.messagesActive) MessageBox.Show(ex.Message); }
-            mediaPlayer.Play();
-            timer.Start();
-        }
-        private void SliderMusic_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-           
+            catch (Exception ex) 
+            { if (Settings.messagesActive) MessageBox.Show(ex.Message);sliderClass.refresh(); }
         }
 
 
