@@ -95,15 +95,16 @@ namespace Player
 
 
 
-
-
-
         ////////общее
         public void Window1_Loaded(object sender, RoutedEventArgs e)
         {
             timer.Interval = new TimeSpan(0, 0, 0, 0, 500);
             timer.Tick += SliderMusic_ValueChanged;
             timer.Start();
+
+            sliderVolume.ValueChanged += SliderVolume_ValueChanged;
+            sliderBalance.ValueChanged += SliderBalance_ValueChanged;
+            sliderSpeed.ValueChanged += SliderSpeed_ValueChanged;
 
             Settings.GetInstance.InitializeSettings();
             foreach (MenuItem menuItem in Menu_Settings.Items)
@@ -148,6 +149,74 @@ namespace Player
 
 
 
+        ///////настройка плеера (громкость/скорость/баланс)
+        private void TextBoxVolume_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
+        {
+            e.Handled = true;
+
+            if (!Char.IsDigit(e.Text, 0))
+                return;
+
+            ushort volume = Convert.ToUInt16(textBoxVolume.Text + e.Text);
+            if (volume > 100) volume = Convert.ToUInt16(e.Text);
+
+            sliderVolume.Value = volume;
+        }
+        private void SliderVolume_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            sliderVolume.SelectionEnd = sliderVolume.Value;
+            textBoxVolume.Text = sliderVolume.Value.ToString();
+
+            mediaPlayer.Volume = sliderVolume.Value / sliderVolume.Maximum;
+        }
+        private void TextBoxSpeed_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
+        {
+
+
+            if (!(Char.IsDigit(e.Text, 0) || (e.Text == ".") && (!textBoxSpeed.Text.Contains("."))
+                && (textBoxSpeed.Text.Length != 0)))
+                return;
+            try
+            {
+                double speed1 = 0;
+                double speed2 = 0;
+                Double.TryParse(textBoxSpeed.Text, out speed1);
+                Double.TryParse(e.Text.Replace(".", ","), out speed2);
+                double speed = (speed1 + speed2) * 10;
+
+                if (speed > 50) speed = 50;
+                if (speed < 0) speed = 0;
+
+                sliderSpeed.Value = speed;
+            }
+            catch { e.Handled = true; };
+        }
+        private void SliderSpeed_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            mediaPlayer.SpeedRatio = sliderSpeed.Value / 10;
+
+            textBoxSpeed.Text = mediaPlayer.SpeedRatio.ToString();
+            sliderSpeed.SelectionEnd = sliderSpeed.Value;
+        }
+
+        private void SliderBalance_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            mediaPlayer.Balance = sliderBalance.Value / (sliderBalance.Maximum);
+            if (sliderBalance.Value > 0)
+            {
+                sliderBalance.IsSelectionRangeEnabled = true;
+                sliderBalance.SelectionStart = sliderBalance.Minimum;
+                sliderBalance.SelectionEnd = sliderBalance.Value;
+            }
+            else if(sliderBalance.Value < 0)
+            {
+                sliderBalance.IsSelectionRangeEnabled = true;
+                sliderBalance.SelectionStart = sliderBalance.Value;
+                sliderBalance.SelectionEnd = sliderBalance.Maximum;
+            }
+            else sliderBalance.IsSelectionRangeEnabled = false;
+        }
+
 
         ///////проигрывание музыки
         private void MediaPlayer_MediaEnded(object sender, EventArgs e)
@@ -172,13 +241,50 @@ namespace Player
             try
             {
                 if (!musicPlay)
-                { mediaPlayer.Play(); musicPlay = true; }
+                {
+                    mediaPlayer.Play();
+                    musicPlay = true;
+                }
                 else
-                { mediaPlayer.Pause(); musicPlay = false; }
+                {
+                    mediaPlayer.Pause();
+                    musicPlay = false;
+                    sliderSpeed.Value = 10;
+                }
             }
             catch (Exception ex)
             { if (Settings.messagesActive) MessageBox.Show(ex.Message); }
         }
+
+
+        private void ButtonMusicBack_Click(object sender, RoutedEventArgs e)
+        {
+            if (musicUpdate[0]) return;
+
+            if (mediaPlayer.NaturalDuration.HasTimeSpan)
+            {
+                if(mediaPlayer.Position.TotalSeconds / mediaPlayer.NaturalDuration.TimeSpan.TotalSeconds > 0.1)
+                {
+                    mediaPlayer.Position = new TimeSpan(0, 0, 0);
+                    return;
+                }
+            }
+
+            switch (musicNum)
+            {
+                case 0:
+                    musicNum = music.Count - 2;
+                    break;
+                case 1:
+                    musicNum = music.Count - 1;
+                    break;
+                default:
+                    musicNum -= 2;
+                    break;
+            }
+            MediaPlayer_MediaEnded(null, null);
+        }
+
 
         private void ComboBoxTracks_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -258,7 +364,7 @@ namespace Player
                 if (sliderClass.retValueChanged) return;
                 if (!mediaPlayer.NaturalDuration.HasTimeSpan) return;
 
-                if (Math.Abs(sliderClass.oldValue - sliderMusic.Value) < (10 * timer.Interval.TotalSeconds * mediaPlayer.SpeedRatio))
+                if (Math.Abs(sliderClass.oldValue - sliderMusic.Value) < (2 * timer.Interval.TotalSeconds * mediaPlayer.SpeedRatio))
                 {
                     sliderClass.retValueChanged = true;
                     sliderMusic.Value = sliderClass.sliderValueCalculate(mediaPlayer.Position.TotalSeconds,
@@ -453,9 +559,13 @@ namespace Player
             ComboBoxPlaylists.IsEnabled = false;
 
             MediaPlayer_MediaEnded(null, null);
-            ComboBoxTracks.Items.RemoveAt(musicNum - 1);
-            music.RemoveAt(musicNum - 1);
-            musicNames.RemoveAt(musicNum - 1);
+            int delInd;
+            if (musicNum == 0)
+                delInd = music.Count - 1;
+            else delInd = musicNum - 1;
+            ComboBoxTracks.Items.RemoveAt(delInd);
+            music.RemoveAt(delInd);
+            musicNames.RemoveAt(delInd);
 
             try
             {
