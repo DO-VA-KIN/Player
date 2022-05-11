@@ -65,7 +65,7 @@ namespace Player
                     Settings.GetInstance.SaveSettings();
                     break;
                 case "Устр. неполадок":
-                    if (MessageBox.Show("Последовательное завершение всех процессов программы и перезапуск?", "Внимание!",
+                    if (MessageBox.Show(" Последовательное завершение всех\nпроцессов программы и перезапуск?", "Внимание!",
                         MessageBoxButton.YesNo,MessageBoxImage.Question,MessageBoxResult.Cancel,
                         System.Windows.MessageBoxOptions.ServiceNotification) != MessageBoxResult.Yes)
                             { return; }
@@ -91,7 +91,34 @@ namespace Player
                     break;
             }
         }
+        private void MenuFile_Click(object sender, RoutedEventArgs e)
+        {
+            MenuItem menuItem = sender as MenuItem;
 
+            try
+            {
+                switch (menuItem.Header)
+                {
+                    case "Закрыть":
+                        if (MessageBox.Show("Завершение работы?", "Внимание!",
+                       MessageBoxButton.OKCancel, MessageBoxImage.Question, MessageBoxResult.Cancel,
+                       System.Windows.MessageBoxOptions.ServiceNotification) != MessageBoxResult.OK)
+                            return;
+                        musicUpdate[2] = true;
+                        System.Windows.Application.Current.Shutdown();
+                        break;
+                    case "Расположение":
+                        Process.Start(Environment.CurrentDirectory);
+                        break;
+                    case "О разработчике":
+                        MessageBox.Show("Written By GHOST?", "Да, я написал эту хрень в 2022!",
+                            MessageBoxButton.OK, MessageBoxImage.Information);
+                        break;
+                }
+            }
+            catch (Exception ex)
+            { if (Settings.messagesActive) MessageBox.Show(ex.Message); }
+        }
 
 
 
@@ -169,34 +196,55 @@ namespace Player
 
             mediaPlayer.Volume = sliderVolume.Value / sliderVolume.Maximum;
         }
+
         private void TextBoxSpeed_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
         {
+            e.Handled = true;
+
+            if (!(Char.IsDigit(e.Text, 0) || (e.Text == ",") || (e.Text == ".") && (!textBoxSpeed.Text.Contains(","))
+                && (!textBoxSpeed.Text.Contains(".")) && (textBoxSpeed.Text.Length != 0)))
+            {  return; }
 
 
-            if (!(Char.IsDigit(e.Text, 0) || (e.Text == ".") && (!textBoxSpeed.Text.Contains("."))
-                && (textBoxSpeed.Text.Length != 0)))
-                return;
-            try
+            textBoxSpeed.Text += e.Text;
+            textBoxSpeed.Text = textBoxSpeed.Text.Replace(".", ",");
+            if (textBoxSpeed.Text.Length > 3)
             {
-                double speed1 = 0;
-                double speed2 = 0;
-                Double.TryParse(textBoxSpeed.Text, out speed1);
-                Double.TryParse(e.Text.Replace(".", ","), out speed2);
-                double speed = (speed1 + speed2) * 10;
-
-                if (speed > 50) speed = 50;
-                if (speed < 0) speed = 0;
-
-                sliderSpeed.Value = speed;
+                if (textBoxSpeed.Text[textBoxSpeed.Text.Length-2] == '0' && e.Text != "0" && textBoxSpeed.Text[0] != '5')
+                {
+                    textBoxSpeed.Text = textBoxSpeed.Text.Remove(textBoxSpeed.Text.Length - 2, 2);
+                    textBoxSpeed.Text += e.Text;
+                }
+                else textBoxSpeed.Text = e.Text;
             }
-            catch { e.Handled = true; };
+
+            double speed = -1;
+
+            try { speed = Convert.ToDouble(textBoxSpeed.Text); }
+            catch { }
+
+            if (speed != -1)
+            {
+                if (speed > 5)
+                {
+                    speed = 5;
+                    textBoxSpeed.Text = speed.ToString("0.0");
+                }
+
+                if (textBoxSpeed.Text.Length == 2)
+                    return;
+
+                if (sliderSpeed.Value == speed)
+                    SliderSpeed_ValueChanged(null, null);
+                else
+                    sliderSpeed.Value = speed;
+            }
         }
         private void SliderSpeed_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            mediaPlayer.SpeedRatio = sliderSpeed.Value / 10;
-
-            textBoxSpeed.Text = mediaPlayer.SpeedRatio.ToString();
-            sliderSpeed.SelectionEnd = sliderSpeed.Value;
+            mediaPlayer.SpeedRatio = sliderSpeed.SelectionEnd = sliderSpeed.Value;
+            textBoxSpeed.Text = sliderSpeed.Value.ToString("0.0");
+            textBoxSpeed.SelectionStart = textBoxSpeed.Text.Length;
         }
 
         private void SliderBalance_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)

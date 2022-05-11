@@ -9,9 +9,9 @@
     <Grid>
         <Menu Grid.Row="0" Margin="0,0,467,312" Panel.ZIndex="2" Background="LightBlue" FontWeight="Medium" FontSize="13">
             <MenuItem x:Name="Menu_File" Header="Файл">
-                <MenuItem Header="Закрыть"/>
-                <MenuItem Header="Расположение"/>
-                <MenuItem Header="О разработчике"/>
+                <MenuItem Header="Закрыть" Click="MenuFile_Click"/>
+                <MenuItem Header="Расположение" Click="MenuFile_Click"/>
+                <MenuItem Header="О разработчике" Click="MenuFile_Click"/>
             </MenuItem>
             <MenuItem x:Name="Menu_Settings" Header="Настройка">
                 <MenuItem Header="Уведомления" IsChecked="True" Click="MenuSettings_Click"/>
@@ -66,7 +66,7 @@
                     <TextBox x:Name="textBoxVolume" HorizontalAlignment="Left" FontSize="13" Height="20" Margin="236,244,0,0" TextWrapping="Wrap" Text="50" VerticalAlignment="Top" Width="30" PreviewTextInput="TextBoxVolume_PreviewTextInput"/>
                     <Slider x:Name="sliderBalance" ToolTip="левый / правый динамики" MaxHeight="18" MaxWidth="200" Margin="551,213,12,79" Minimum="-5" Maximum="5" Value="0" SelectionStart="0" IsMoveToPointEnabled="False" IsSnapToTickEnabled="True" TickFrequency="1" IsSelectionRangeEnabled="true" SmallChange="1"/>
                     <Label Content= "баланс" HorizontalContentAlignment="Right" HorizontalAlignment="Left" FlowDirection="LeftToRight" Margin="452,211,0,79" VerticalAlignment="Stretch" MaxHeight="25" MaxWidth="100" FontSize="14" FontFamily="Times New Roman" Width="100"/>
-                    <Slider x:Name="sliderSpeed" MaxHeight="18" MaxWidth="200" Margin="452,242,106,50" Minimum="0" Maximum="50" Value="10" SelectionEnd="10" SelectionStart="0" IsMoveToPointEnabled="True" IsSnapToTickEnabled="True" TickFrequency="1" IsSelectionRangeEnabled="true" SmallChange="1"/>
+                    <Slider x:Name="sliderSpeed" MaxHeight="18" MaxWidth="200" Margin="452,242,106,50" Minimum="0" Maximum="5" Value="1" SelectionEnd="1" SelectionStart="0" IsMoveToPointEnabled="True" IsSnapToTickEnabled="True" TickFrequency="0.1" IsSelectionRangeEnabled="true" SmallChange="0.1"/>
                     <Label Content= "скорость x" HorizontalContentAlignment="Left" HorizontalAlignment="Left" FlowDirection="LeftToRight" Margin="615,240,0,50" VerticalAlignment="Stretch" MaxHeight="25" MaxWidth="100" FontSize="14" FontFamily="Times New Roman" Width="77"/>
 
 
@@ -111,16 +111,15 @@
                 </Grid>
             </TabItem>
 
-            <TabItem Header=" Плейлисты ">
+            <TabItem Header=" Плейлисты " Visibility="Collapsed">
                 <Grid>
 
 
                 </Grid>
             </TabItem>
 
-            <TabItem x:Name="tabItem_Settings" Header=" Редактор ">
+            <TabItem x:Name="tabItem_Settings" Header=" Редактор " Visibility="Collapsed">
                 <Grid>
-
 
                 </Grid>
             </TabItem>
