@@ -97,3 +97,36 @@ H:\mainProgs\Player\Player\obj\Debug\Player.csproj.CoreCompileInputs.cache
 H:\mainProgs\Player\Player\obj\Debug\Player.csproj.CopyComplete
 H:\mainProgs\Player\Player\obj\Debug\Player.exe
 H:\mainProgs\Player\Player\obj\Debug\Player.pdb
+F:\mainProgs\Player\Player\bin\Debug\music\basePlaylist\1st track   Pirates - He is a pirate.mp3
+F:\mainProgs\Player\Player\bin\Debug\music\basePlaylist\Pirates - Barbossa is hungry.mp3
+F:\mainProgs\Player\Player\bin\Debug\music\basePlaylist\Pirates - Black pearl.mp3
+F:\mainProgs\Player\Player\bin\Debug\music\basePlaylist\Pirates - Blood ritual.mp3
+F:\mainProgs\Player\Player\bin\Debug\music\basePlaylist\Pirates - Bootstrap.mp3
+F:\mainProgs\Player\Player\bin\Debug\music\basePlaylist\Pirates - Cave.mp3
+F:\mainProgs\Player\Player\bin\Debug\music\basePlaylist\Pirates - Fog bound.mp3
+F:\mainProgs\Player\Player\bin\Debug\music\basePlaylist\Pirates - Medallion calls.mp3
+F:\mainProgs\Player\Player\bin\Debug\music\basePlaylist\Pirates - Moonlight serenade.mp3
+F:\mainProgs\Player\Player\bin\Debug\music\basePlaylist\Pirates - One last shot.mp3
+F:\mainProgs\Player\Player\bin\Debug\music\basePlaylist\Pirates - Skull and Crossbones.mp3
+F:\mainProgs\Player\Player\bin\Debug\music\basePlaylist\Pirates - Swords crossed.mp3
+F:\mainProgs\Player\Player\bin\Debug\music\basePlaylist\Pirates - Underwater march.mp3
+F:\mainProgs\Player\Player\bin\Debug\music\basePlaylist\Pirates - Walk the plank.mp3
+F:\mainProgs\Player\Player\bin\Debug\music\basePlaylist\Pirates - Will and Elizabeth.mp3
+F:\mainProgs\Player\Player\bin\Debug\Player.exe.config
+F:\mainProgs\Player\Player\bin\Debug\Player.exe
+F:\mainProgs\Player\Player\bin\Debug\Player.pdb
+F:\mainProgs\Player\Player\bin\Debug\Newtonsoft.Json.dll
+F:\mainProgs\Player\Player\obj\Debug\Player.csproj.AssemblyReference.cache
+F:\mainProgs\Player\Player\obj\Debug\MainWindow.g.cs
+F:\mainProgs\Player\Player\obj\Debug\App.g.cs
+F:\mainProgs\Player\Player\obj\Debug\Player_Content.g.cs
+F:\mainProgs\Player\Player\obj\Debug\Player_MarkupCompile.cache
+F:\mainProgs\Player\Player\obj\Debug\Player_MarkupCompile.lref
+F:\mainProgs\Player\Player\obj\Debug\MainWindow.baml
+F:\mainProgs\Player\Player\obj\Debug\Player.g.resources
+F:\mainProgs\Player\Player\obj\Debug\Player.Properties.Resources.resources
+F:\mainProgs\Player\Player\obj\Debug\Player.csproj.GenerateResource.cache
+F:\mainProgs\Player\Player\obj\Debug\Player.csproj.CoreCompileInputs.cache
+F:\mainProgs\Player\Player\obj\Debug\Player.csproj.CopyComplete
+F:\mainProgs\Player\Player\obj\Debug\Player.exe
+F:\mainProgs\Player\Player\obj\Debug\Player.pdb
